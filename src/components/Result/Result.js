@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { fetchReport, getDocument, getDocumentPage, getReportDocumentId, getReportDocumentInfo, getReportInstanceId, getReportParameters, registerClient } from '../../utils/requests';
+import { fetchReport, getReportDocumentId, getReportDocumentInfo, getReportInstanceId, getReportParameters, registerClient } from '../../utils/requests';
 import { combineReportPages, generateInstanceRequestBody, getDocumentRequestBody, getDocumentRequestBodyByFormatAndDocId, getParametersRequestBody } from '../../utils/functions';
 import { ReportContext } from '../../contexts/ReportContext';
 
@@ -36,8 +36,21 @@ const Result = () => {
                 const updatedDocumentRequestBody = getDocumentRequestBodyByFormatAndDocId(selectedFormat, baseDocumentID);
                 const { documentId: updatedDocumentId } = await getReportDocumentId(clientId, instanceId, updatedDocumentRequestBody);
 
-                // Fetch report document info
-                const { pageCount } = await getReportDocumentInfo(clientId, instanceId, baseDocumentID);
+                // Retry fetching document info until the document is ready
+                let documentReady = false;
+                let documentInfo;
+
+                while (!documentReady) {
+                    documentInfo = await getReportDocumentInfo(clientId, instanceId, baseDocumentID);
+                    documentReady = documentInfo.documentReady;
+
+                    if (!documentReady) {
+                        await new Promise(resolve => setTimeout(resolve, 2000)); // Retry in 2 seconds
+                    }
+                }
+
+                // Get page count
+                const { pageCount } = documentInfo;
 
                 // Combine page styles and content
                 const combinedReportPages = await combineReportPages(clientId, instanceId, baseDocumentID, pageCount);
