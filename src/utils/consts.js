@@ -17,4 +17,6 @@ export const steps = [
         title: 'Result'
     }
 ]
+
+// find 'report:' and returns its name
 export const reportRegex = /report:\s*'([^']+)'/

@@ -17,18 +17,18 @@ const Buttons = ({ curStep, setCurStep }) => {
     };
 
     return (
-        <Row justify="space-between" style={{ marginTop: 16 }}>
-            <Col>
+        <Row justify={curStep === 0 ? 'end' : 'space-between'} style={{ marginTop: 16 }}>
+            {curStep > 0 && <Col>
                 <Button type={"primary"} disabled={curStep === 0} onClick={handlePrevStep}>
                     Back
                 </Button>
-            </Col>
+            </Col>}
             <Col>
                 <Button type={"primary"} disabled={typeof selectedReportId !== 'number' || loadingPages || (curStep === 2 && !selectedFormat)} onClick={handleNextStepOrReportDownloading}>
                     {curStep < 2 ? 'Next' : 'Download Report'}
                 </Button>
             </Col>
-        </Row>
+        </Row >
     )
 };
 

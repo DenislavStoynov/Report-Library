@@ -14,6 +14,7 @@ const Result = () => {
                 setLoadingPages(true);
                 const { reportPath } = reports[selectedReportId];
                 const report = await fetchReport(reportPath);
+                
                 const paramsRequestBody = getParametersRequestBody(report);
                 const { clientId } = await registerClient();
 

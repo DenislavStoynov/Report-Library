@@ -1,15 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ReportContext } from './contexts/ReportContext';
-import { Steps } from 'antd';
 import Wrapper from './components/Wrapper/Wrapper';
 import { fetchReports } from './utils/requests';
-import { steps } from './utils/consts';
 import Buttons from './components/Buttons/Buttons';
 import Reports from './components/Reports/Reports';
 import Formats from './components/Formats/Formats';
 import Result from './components/Result/Result';
-
-const { Step } = Steps;
+import StepsComponent from './components/StepsComponent/StepsComponent';
 
 const renderComponent = (curStep) => {
   switch (curStep) {
@@ -28,10 +25,6 @@ function App() {
   const [curStep, setCurStep] = useState(0);
   const { setReports } = useContext(ReportContext);
 
-  const extractSteps = () => {
-    return steps.map(step => <Step key={step.id} title={step.title} />)
-  };
-
   useEffect(() => {
     const getReports = async () => {
       try {
@@ -47,15 +40,13 @@ function App() {
   }, []);
 
   return (
-      <section className="App">
-        <Wrapper>
-          <Steps current={curStep} style={{ marginBottom: 16 }}>
-            {extractSteps()}
-          </Steps>
-          {renderComponent(curStep)}
-          <Buttons curStep={curStep} setCurStep={setCurStep} />
-        </Wrapper>
-      </section>
+    <section className="App">
+      <Wrapper>
+        <StepsComponent curStep={curStep} />
+        {renderComponent(curStep)}
+        <Buttons curStep={curStep} setCurStep={setCurStep} />
+      </Wrapper>
+    </section>
   );
 }
 
