@@ -2,6 +2,7 @@ import { BASE_SUFFIX, BASE_URL, excludedNodeNames } from "./consts";
 import { getDocumentPage } from "./requests";
 import axios from "axios";
 
+// Extract reports from https://demos.telerik.com/reporting recursively
 export const extractReports = (node, reports) => {
     if (
         node.nodeName === 'a' &&
@@ -72,6 +73,7 @@ export const getDocumentRequestBodyByFormatAndDocId = (format, baseDocumentID) =
     }
 };
 
+// Prepend https://demos.telerik.com/ to all image sources
 export const prependTelerikURLToImageSrc = (htmlContent) => {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlContent, 'text/html');
@@ -99,6 +101,7 @@ export const combineReportPages = async (clientId, instanceId, baseDocumentID, p
     return combinedHtmlResult;
 }
 
+// Create and append 'get' form to download report
 export const downloadReportDocument = async (clientId, instanceId, documentId, selectedFormat) => {
     if (!selectedFormat) return;
 
@@ -122,6 +125,8 @@ export const downloadReportDocument = async (clientId, instanceId, documentId, s
 export const getParametersRequestBody = (report) => {
     return { parameterValues: {}, report };
 };
+
+/* Request URLs */
 
 export const getExportFormatsURL = () => {
     return BASE_URL + BASE_SUFFIX + '/api/reports/formats';

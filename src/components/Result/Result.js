@@ -12,26 +12,34 @@ const Result = () => {
         const getReport = async () => {
             try {
                 setLoadingPages(true);
+
+                // Fetch report document and extract report name
                 const { reportPath } = reports[selectedReportId];
                 const report = await fetchReport(reportPath);
                 
+                // Generate report parameters request body and register client
                 const paramsRequestBody = getParametersRequestBody(report);
                 const { clientId } = await registerClient();
-
+                
+                // Use generated request parameters to get report parameters
                 const reportParamsResponse = await getReportParameters(clientId, paramsRequestBody);
 
+                // Generate instance request body, using id and value properties, and fetch report instance id
                 const instanceRequestBody = generateInstanceRequestBody(report, reportParamsResponse);
                 const { instanceId } = await getReportInstanceId(clientId, instanceRequestBody);
 
+                // Fetch report document id, using HTML5Interactive type
                 const documentRequestBody = getDocumentRequestBody();
                 const { documentId: baseDocumentID } = await getReportDocumentId(clientId, instanceId, documentRequestBody);
 
+                // Update document request body to use selected export format and initial document id
                 const updatedDocumentRequestBody = getDocumentRequestBodyByFormatAndDocId(selectedFormat, baseDocumentID);
                 const { documentId: updatedDocumentId } = await getReportDocumentId(clientId, instanceId, updatedDocumentRequestBody);
 
-
+                // Fetch report document info
                 const { pageCount } = await getReportDocumentInfo(clientId, instanceId, baseDocumentID);
 
+                // Combine page styles and content
                 const combinedReportPages = await combineReportPages(clientId, instanceId, baseDocumentID, pageCount);
 
                 setReportPages(combinedReportPages);
